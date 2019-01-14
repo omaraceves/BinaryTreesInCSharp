@@ -228,9 +228,69 @@ namespace BinaryTreesCSharp
             return true;
         }
 
+        /// <summary>
+        /// Builds a tree given inOrder and postOrder values
+        /// </summary>
+        /// <param name="inorder">inOrder values</param>
+        /// <param name="postorder">postOrder values</param>
+        /// <returns>Root node</returns>
+        public Node BuildTreeWithInOrderAndPostOrder(int[] inorder, int[] postorder)
+        {
+            if (inorder == null || postorder == null || inorder.Length != postorder.Length)
+                return null;
+
+            Dictionary<int, int> map = new Dictionary<int, int>();
+
+            for (int i = 0; i < inorder.Length; i++)
+            {
+                map.Add(inorder[i], i);
+            }
+
+            return MyVersionOfBuidBninaryTree(inorder, 0, inorder.Length - 1, postorder, 0, postorder.Length - 1, map);
+        }
+
+
+
+
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// Core logic to build a tree given inOrder and postOrder values
+        /// </summary>
+        /// <param name="inOrder">in order value collection</param>
+        /// <param name="inOrderStart">in order start index</param>
+        /// <param name="inOrderEnd">in order end index</param>
+        /// <param name="postOder">post order value collection</param>
+        /// <param name="postOrderStart">post order start index</param>
+        /// <param name="postOrderEnd">post order end index</param>
+        /// <param name="inOrderIndexes">Dictionary with in order position indexes</param>
+        /// <returns>Root node with subtrees</returns>
+        private Node MyVersionOfBuidBninaryTree(int[] inOrder, int inOrderStart, int inOrderEnd, int[] postOder, int postOrderStart, int postOrderEnd, Dictionary<int, int> inOrderIndexes)
+        {
+            //return null if start > end
+            if (inOrderStart > inOrderEnd && postOrderStart > postOrderEnd)
+            {
+                return null;
+            }
+
+            //Get root and index from postOrder latest value
+            Node root = new Node();
+            root.intValue = postOder[postOrderEnd];
+            int index = inOrderIndexes[root.intValue];
+
+            //Get left and right subtrees of root
+            root.Left = MyVersionOfBuidBninaryTree(inOrder, inOrderStart, index - 1, postOder, postOrderStart, postOrderStart + ((index - 1) - inOrderStart), inOrderIndexes);
+            root.Right = MyVersionOfBuidBninaryTree(inOrder, index + 1, inOrderEnd, postOder, postOrderStart + (index - inOrderStart), postOrderEnd - 1, inOrderIndexes);
+
+            //Add node to tree
+            this.Tree.Add(root);
+
+            //return node
+            return root;
+        }
+
         /// <summary>
         /// Gets new node
         /// </summary>
@@ -315,6 +375,16 @@ namespace BinaryTreesCSharp
             /// Ctor
             /// </summary>
             public Node() { }
+
+            /// <summary>
+            /// Ctor
+            /// </summary>
+            /// <param name="value">int value</param>
+            public Node(int value)
+            {
+                intValue = value;
+                strValue = value.ToString();   
+            }
         }
         #endregion
     }

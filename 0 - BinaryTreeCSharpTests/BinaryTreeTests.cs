@@ -8,6 +8,38 @@ namespace BinaryTreeCSharpTests
     public class BinaryTreeTests
     {
         [TestMethod]
+        public void Given_A_InOrder_And_PostOrder_Tree_Values_BuildTree()
+        {
+            //arrange
+            int[] inOrder =   { 4,2,5,1,6,3,7 };
+            int[] postOrder = { 4,5,2,6,7,3,1 };
+            BinaryTree tree = new BinaryTree();
+
+            //act
+            tree.BuildTreeWithInOrderAndPostOrder(inOrder, postOrder);
+
+            //assert
+            Assert.AreEqual(inOrder.Length, tree.Tree.Count);
+            Assert.AreEqual(postOrder.Length, tree.Tree.Count);
+        }
+
+        [TestMethod]
+        public void Given_A_InOrder_And_PostOrder_Tree_Values_BuildTree2()
+        {
+            //arrange
+            int[] inOrder = { 9, 3, 15, 20, 7 };
+            int[] postOrder = { 9, 15, 7, 20, 3 };
+            BinaryTree tree = new BinaryTree();
+
+            //act
+            tree.BuildTreeWithInOrderAndPostOrder(inOrder, postOrder);
+
+            //assert
+            Assert.AreEqual(inOrder.Length, tree.Tree.Count);
+            Assert.AreEqual(postOrder.Length, tree.Tree.Count);
+        }
+
+        [TestMethod]
         public void Given_A_Tree_When_MaxDepth_Then_ReturnMaxDepth()
         {
             //arrange
