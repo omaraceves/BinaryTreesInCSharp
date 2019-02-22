@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using BinaryTreesCSharp.Model;
 
 namespace BinaryTreesCSharp
 {
@@ -302,6 +303,11 @@ namespace BinaryTreesCSharp
                 return root; //p and q were found
         }
 
+        /// <summary>
+        /// Serialized tree into string
+        /// </summary>
+        /// <param name="root">Tree root</param>
+        /// <returns>Serialized string</returns>
         public string Serialize(Node root)
         {
             if(root == null)
@@ -313,23 +319,6 @@ namespace BinaryTreesCSharp
             SerializeHelper(root, sb);
             sb.Append(","); //append finisher
             return sb.ToString();
-        }
-
-        private void SerializeHelper(Node root, StringBuilder sb)
-        {
-            if(root == null)
-            {
-                sb.Append(".");
-            }
-            else
-            {
-                sb.Append(root.intValue);
-                sb.Append(",");
-                SerializeHelper(root.Left, sb);
-                sb.Append(",");
-                SerializeHelper(root.Right, sb);
-            }
-
         }
 
         public Node Deserialize(String s)
@@ -344,9 +333,19 @@ namespace BinaryTreesCSharp
             return DeserializeHelper(s, ref i);
         }
 
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Deserializer helper
+        /// </summary>
+        /// <param name="s">Serialized string</param>
+        /// <param name="i">Reference/Pointer to position index value</param>
+        /// <returns>Binary tree</returns>
         private Node DeserializeHelper(String s, ref int i)
         {
-            if(s[i] == '.')
+            if (s[i] == '.')
             {
                 i++;
                 return null;
@@ -361,7 +360,7 @@ namespace BinaryTreesCSharp
                     value = value + s[i];
                     i++;
                 }
-               
+
                 i++;
                 root.Left = DeserializeHelper(s, ref i);
                 i++;
@@ -372,15 +371,27 @@ namespace BinaryTreesCSharp
             }
         }
 
+        /// <summary>
+        /// Serializer helper
+        /// </summary>
+        /// <param name="root">Tree root</param>
+        /// <param name="sb">StringBuider instance</param>
+        private void SerializeHelper(Node root, StringBuilder sb)
+        {
+            if (root == null)
+            {
+                sb.Append(".");
+            }
+            else
+            {
+                sb.Append(root.intValue);
+                sb.Append(",");
+                SerializeHelper(root.Left, sb);
+                sb.Append(",");
+                SerializeHelper(root.Right, sb);
+            }
 
-        
-
-
-
-
-        #endregion
-
-        #region Private Methods
+        }
 
         /// <summary>
         /// Core logic to build a tree given inOrder and postOrder values
@@ -504,49 +515,6 @@ namespace BinaryTreesCSharp
         }
 
        
-        #endregion
-
-        #region Node Class
-        /// <summary>
-        /// Node Calss
-        /// </summary>
-        public class Node
-        {
-            /// <summary>
-            /// Left pointer
-            /// </summary>
-            public Node Left { get; set; }
-
-            /// <summary>
-            /// Right pointer
-            /// </summary>
-            public Node Right { get; set; }
-
-            /// <summary>
-            /// String value
-            /// </summary>
-            public string strValue { get; set; }
-
-            /// <summary>
-            /// String value
-            /// </summary>
-            public int intValue { get; set; }
-
-            /// <summary>
-            /// Ctor
-            /// </summary>
-            public Node() { }
-
-            /// <summary>
-            /// Ctor
-            /// </summary>
-            /// <param name="value">int value</param>
-            public Node(int value)
-            {
-                intValue = value;
-                strValue = value.ToString();   
-            }
-        }
         #endregion
     }
 }
