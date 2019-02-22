@@ -8,7 +8,72 @@ namespace BinaryTreeCSharpTests
     public class BinaryTreeTests
     {
         [TestMethod]
-        public void Given_A_InOrder_And_PostOrder_Tree_Values_BuildTree()
+        public void Given_A_String_When_Deserialize_Then_Return_TreeRoot()
+        {
+            //arrange
+            int[] inOrder = { 9, 3, 15, 20, 7 };
+            int[] postOrder = { 9, 15, 7, 20, 3 };
+            BinaryTree tree = new BinaryTree();
+            tree.BuildTreeWithInOrderAndPostOrder(inOrder, postOrder);
+            tree.Tree.Reverse();
+            string serialized = tree.Serialize(tree.Root);
+
+            //
+            Node expected = tree.Deserialize(serialized);
+            string expectedStr = tree.Serialize(expected);
+
+            //assert
+            Assert.AreEqual(tree.Root.intValue, expected.intValue);
+            Assert.AreEqual(tree.Root.Left.intValue, expected.Left.intValue);
+            Assert.AreEqual(tree.Root.Right.intValue, expected.Right.intValue);
+            Assert.AreEqual(tree.Root.Right.Left.intValue, expected.Right.Left.intValue);
+            Assert.AreEqual(tree.Root.Right.Right.intValue, expected.Right.Right.intValue);
+            Assert.AreEqual(expectedStr, serialized);
+
+        }
+
+        [TestMethod]
+        public void Given_A_Tree_Root_When_Serialize_Then_Return_String()
+        {
+            //arrange
+            int[] inOrder = { 9, 3, 15, 20, 7 };
+            int[] postOrder = { 9, 15, 7, 20, 3 };
+            BinaryTree tree = new BinaryTree();
+            tree.BuildTreeWithInOrderAndPostOrder(inOrder, postOrder);
+            tree.Tree.Reverse();
+
+            //act
+            string serialized = tree.Serialize(tree.Root);
+
+            //assert
+            Assert.AreEqual(serialized, "3,9,.,.,20,15,.,.,7,.,.,");
+           
+        }
+
+        [TestMethod]
+        public void Given_A_Tree_P_AND_Q_Nodes_Find_LCA()
+        {
+            //arrange
+            int[] inOrder = { 4, 2, 5, 1, 6, 3, 7 };
+            int[] postOrder = { 4, 5, 2, 6, 7, 3, 1 };
+            BinaryTree tree = new BinaryTree();
+            tree.BuildTreeWithInOrderAndPostOrder(inOrder, postOrder);
+            tree.Tree.Reverse();
+            Node p = tree.Tree.Find(x => x.intValue == 4);
+            Node q = tree.Tree.Find(x => x.intValue == 5);
+            var expected = tree.Tree.Find(x => x.intValue == 2);
+
+            //act
+            var result = tree.FindLCA(tree.Root, p, q);
+
+            //assert
+            Assert.AreEqual(expected, result);
+
+
+        }
+
+        [TestMethod]
+        public void Given_A_InOrder_And_PostOrder_Tree_Values_BuildTree1()
         {
             //arrange
             int[] inOrder =   { 4,2,5,1,6,3,7 };
@@ -38,6 +103,39 @@ namespace BinaryTreeCSharpTests
             Assert.AreEqual(inOrder.Length, tree.Tree.Count);
             Assert.AreEqual(postOrder.Length, tree.Tree.Count);
         }
+
+        [TestMethod]
+        public void Given_A_InOrder_And_PreOrder_Tree_Values_BuildTree1()
+        {
+            //arrange
+            int[] inOrder = { 9, 3, 15, 20, 7 };
+            int[] preOrder = { 9, 3, 15, 20, 7};
+            BinaryTree tree = new BinaryTree();
+
+            //act
+            tree.BuildTreeWithInOrderAndPreOrder(inOrder, preOrder);
+
+            //assert
+            Assert.AreEqual(inOrder.Length, tree.Tree.Count);
+            Assert.AreEqual(preOrder.Length, tree.Tree.Count);
+        }
+
+        [TestMethod]
+        public void Given_A_InOrder_And_PreOrder_Tree_Values_BuildTree2()
+        {
+            //arrange
+            int[] inOrder = { 4, 2, 5, 1, 6, 3, 7 };
+            int[] preOrder = { 1, 2, 4, 5, 3, 6, 7 };
+            BinaryTree tree = new BinaryTree();
+
+            //act
+            tree.BuildTreeWithInOrderAndPreOrder(inOrder, preOrder);
+
+            //assert
+            Assert.AreEqual(inOrder.Length, tree.Tree.Count);
+            Assert.AreEqual(preOrder.Length, tree.Tree.Count);
+        }
+
 
         [TestMethod]
         public void Given_A_Tree_When_MaxDepth_Then_ReturnMaxDepth()

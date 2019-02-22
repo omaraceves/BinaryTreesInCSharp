@@ -246,8 +246,134 @@ namespace BinaryTreesCSharp
                 map.Add(inorder[i], i);
             }
 
-            return MyVersionOfBuidBninaryTree(inorder, 0, inorder.Length - 1, postorder, 0, postorder.Length - 1, map);
+            return MyVersionOfBuidBninaryTreeWithInOrderAndPostOrder(inorder, 0, inorder.Length - 1, postorder, 0, postorder.Length - 1, map);
         }
+
+        /// <summary>
+        /// Builds a tree given inOrder and postOrder values
+        /// </summary>
+        /// <param name="inorder">inOrder values</param>
+        /// <param name="postorder">postOrder values</param>
+        /// <returns>Root node</returns>
+        public Node BuildTreeWithInOrderAndPreOrder(int[] inorder, int[] preorder)
+        {
+            if (inorder == null || preorder == null || inorder.Length != preorder.Length)
+                return null;
+
+            Dictionary<int, int> map = new Dictionary<int, int>();
+
+            for (int i = 0; i < inorder.Length; i++)
+            {
+                map.Add(inorder[i], i);
+            }
+
+            return MyVersionOfBuidBninaryTreeWithInOrderAndPreOrder(inorder, 0, inorder.Length - 1, preorder, 0, preorder.Length - 1, map);
+        }
+
+        /// <summary>
+        /// Finds lower common ancestor of p, q
+        /// </summary>
+        /// <param name="root">Tree's root node</param>
+        /// <param name="p">Node p</param>
+        /// <param name="q">Node q</param>
+        /// <returns>LCS of p,q</returns>
+        public Node FindLCA(Node root, Node p, Node q)
+        {
+            //find p, q or terminal
+            if(root == null)
+            {
+                return root;
+            }
+            if(root == p || root == q)
+            {
+                return root;
+            }
+
+            //Recurse on left and right subtree 
+            var left = FindLCA(root.Left, p, q);
+            var right = FindLCA(root.Right, p, q);
+
+            //Chances are q, p or both were found
+            if (left == null) 
+                return right; //nothing was found on the left subtree, recursion reached all its terminal nodes. That means the an
+            else if (right == null)
+                return left; //nothing was found on the right subtree, recursion reached all its terminal nodes.
+            else
+                return root; //p and q were found
+        }
+
+        public string Serialize(Node root)
+        {
+            if(root == null)
+            {
+                return ".";
+            }
+
+            StringBuilder sb = new StringBuilder();
+            SerializeHelper(root, sb);
+            sb.Append(","); //append finisher
+            return sb.ToString();
+        }
+
+        private void SerializeHelper(Node root, StringBuilder sb)
+        {
+            if(root == null)
+            {
+                sb.Append(".");
+            }
+            else
+            {
+                sb.Append(root.intValue);
+                sb.Append(",");
+                SerializeHelper(root.Left, sb);
+                sb.Append(",");
+                SerializeHelper(root.Right, sb);
+            }
+
+        }
+
+        public Node Deserialize(String s)
+        {
+            if(s.Equals(".") || String.IsNullOrEmpty(s))
+            {
+                return null;
+            }
+
+            int i = 0;
+
+            return DeserializeHelper(s, ref i);
+        }
+
+        private Node DeserializeHelper(String s, ref int i)
+        {
+            if(s[i] == '.')
+            {
+                i++;
+                return null;
+            }
+            else
+            {
+                Node root = new Node();
+                string value = string.Empty;
+
+                while (!s[i].Equals(','))
+                {
+                    value = value + s[i];
+                    i++;
+                }
+               
+                i++;
+                root.Left = DeserializeHelper(s, ref i);
+                i++;
+                root.Right = DeserializeHelper(s, ref i);
+
+                root.intValue = int.Parse(value);
+                return root;
+            }
+        }
+
+
+        
 
 
 
@@ -262,12 +388,12 @@ namespace BinaryTreesCSharp
         /// <param name="inOrder">in order value collection</param>
         /// <param name="inOrderStart">in order start index</param>
         /// <param name="inOrderEnd">in order end index</param>
-        /// <param name="postOder">post order value collection</param>
+        /// <param name="postOrder">post order value collection</param>
         /// <param name="postOrderStart">post order start index</param>
         /// <param name="postOrderEnd">post order end index</param>
         /// <param name="inOrderIndexes">Dictionary with in order position indexes</param>
         /// <returns>Root node with subtrees</returns>
-        private Node MyVersionOfBuidBninaryTree(int[] inOrder, int inOrderStart, int inOrderEnd, int[] postOder, int postOrderStart, int postOrderEnd, Dictionary<int, int> inOrderIndexes)
+        private Node MyVersionOfBuidBninaryTreeWithInOrderAndPostOrder(int[] inOrder, int inOrderStart, int inOrderEnd, int[] postOrder, int postOrderStart, int postOrderEnd, Dictionary<int, int> inOrderIndexes)
         {
             //return null if start > end
             if (inOrderStart > inOrderEnd && postOrderStart > postOrderEnd)
@@ -277,12 +403,47 @@ namespace BinaryTreesCSharp
 
             //Get root and index from postOrder latest value
             Node root = new Node();
-            root.intValue = postOder[postOrderEnd];
+            root.intValue = postOrder[postOrderEnd];
             int index = inOrderIndexes[root.intValue];
 
             //Get left and right subtrees of root
-            root.Left = MyVersionOfBuidBninaryTree(inOrder, inOrderStart, index - 1, postOder, postOrderStart, postOrderStart + ((index - 1) - inOrderStart), inOrderIndexes);
-            root.Right = MyVersionOfBuidBninaryTree(inOrder, index + 1, inOrderEnd, postOder, postOrderStart + (index - inOrderStart), postOrderEnd - 1, inOrderIndexes);
+            root.Left = MyVersionOfBuidBninaryTreeWithInOrderAndPostOrder(inOrder, inOrderStart, index - 1, postOrder, postOrderStart, postOrderStart + ((index - 1) - inOrderStart), inOrderIndexes);
+            root.Right = MyVersionOfBuidBninaryTreeWithInOrderAndPostOrder(inOrder, index + 1, inOrderEnd, postOrder, postOrderStart + (index - inOrderStart), postOrderEnd - 1, inOrderIndexes);
+
+            //Add node to tree
+            this.Tree.Add(root);
+
+            //return node
+            return root;
+        }
+
+        /// <summary>
+        /// Core logic to build a tree given inOrder and postOrder values
+        /// </summary>
+        /// <param name="inOrder">in order value collection</param>
+        /// <param name="inOrderStart">in order start index</param>
+        /// <param name="inOrderEnd">in order end index</param>
+        /// <param name="postOder">post order value collection</param>
+        /// <param name="postOrderStart">post order start index</param>
+        /// <param name="postOrderEnd">post order end index</param>
+        /// <param name="inOrderIndexes">Dictionary with in order position indexes</param>
+        /// <returns>Root node with subtrees</returns>
+        private Node MyVersionOfBuidBninaryTreeWithInOrderAndPreOrder(int[] inOrder, int inOrderStart, int inOrderEnd, int[] preOrder, int preOrderStart, int preOrderEnd, Dictionary<int, int> inOrderIndexes)
+        {
+            //return null if start > end
+            if (inOrderStart > inOrderEnd && preOrderStart > preOrderEnd)
+            {
+                return null;
+            }
+
+            //Get root and index from postOrder latest value
+            Node root = new Node();
+            root.intValue = preOrder[preOrderStart];
+            int index = inOrderIndexes[root.intValue];
+
+            //Get left and right subtrees of root
+            root.Left = MyVersionOfBuidBninaryTreeWithInOrderAndPreOrder(inOrder, inOrderStart, index - 1, preOrder, preOrderStart + 1, preOrderStart + (index - inOrderStart), inOrderIndexes);
+            root.Right = MyVersionOfBuidBninaryTreeWithInOrderAndPreOrder(inOrder, index + 1, inOrderEnd, preOrder, preOrderStart + (index - inOrderStart) + 1, preOrderEnd, inOrderIndexes);
 
             //Add node to tree
             this.Tree.Add(root);
