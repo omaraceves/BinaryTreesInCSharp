@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using static BinaryTreesCSharp.BinaryTree;
 using BinaryTreesCSharp;
+using BinaryTreesCSharp.Model;
 
 namespace BinaryTreeCSharpTests
 {
